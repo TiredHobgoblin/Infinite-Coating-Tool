@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Infinite_Coating_Tool</RootNamespace>
+    <SelfContained>True</SelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ini-parser" Version="2.5.2" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta3.22114.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ResourceFiles Include="$(ProjectDir)\Resources\template.py" />
+    <ResourceFiles Include="$(ProjectDir)\Resources\groups.ini" />
+    <ResourceFiles Include="$(ProjectDir)\Resources\cache.ini" />
+  </ItemGroup>
+
+  <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
+    <Copy SourceFiles="@(ResourceFiles)" DestinationFolder="$(OutDir)\Resources" SkipUnchangedFiles="false" />
+  </Target>
+
+  <Target Name="CopyPublishContent" AfterTargets="AfterPublish">
+    <Copy SourceFiles="@(ResourceFiles)" DestinationFolder="$(PublishDir)\publish\Resources" SkipUnchangedFiles="false" /> 
+  </Target>
+
+</Project>
