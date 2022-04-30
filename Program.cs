@@ -58,6 +58,7 @@ namespace Infinite_Coating_Tool
             // Not filling detail maps because it would be annoying to ask every time if you don't have them.
             if (output == "")
             {
+                Console.WriteLine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources","cache.ini"));
                 Console.WriteLine("Output location in cache.ini is empty. Please give a folder:");
                 Console.Write("> ");
                 output = Console.ReadLine();
@@ -98,6 +99,15 @@ namespace Infinite_Coating_Tool
                         break;
                     case "cvw_1_layered":
                         regionScripts.Add(regionName, ReplaceEnums(l.Value, swatches, coating, regionedPyScript, 0b_0000_0001));
+                        break;
+                    case "cvw_7_layered_damage":
+                        regionScripts.Add(regionName, ReplaceEnums(l.Value, swatches, coating, regionedPyScript, 0b_1111_1111));
+                        break;
+                    case "cvw_4_layered_damage":
+                        regionScripts.Add(regionName, ReplaceEnums(l.Value, swatches, coating, regionedPyScript, 0b_1111_0001));
+                        break;
+                    case "cvw_1_layered_damage":
+                        regionScripts.Add(regionName, ReplaceEnums(l.Value, swatches, coating, regionedPyScript, 0b_1000_0001));
                         break;
                     default:
                         throw new UnknownMaterialException($"\'{l.Value.material}\' is not a recognized material name.");
@@ -142,9 +152,9 @@ namespace Infinite_Coating_Tool
                     Console.WriteLine($"Unknown group \'{swatch.groupName}\' in swatch.");
 
                 // Fill in the script values
-                pyScript = pyScript.Replace($"GRIMEAMOUNT_{i+1}", coating.grimeAmount.ToString());
-                pyScript = pyScript.Replace($"SCRATCHAMOUNT_{i+1}", (coating.scratchAmount*edgeWear).ToString());
-                pyScript = pyScript.Replace($"UNIEMITAMOUNT_{i+1}", coating.emissiveAmount.ToString());
+                pyScript = pyScript.Replace($"GRIMEAMOUNT", coating.grimeAmount.ToString());
+                pyScript = pyScript.Replace($"SCRATCHAMOUNT", (coating.scratchAmount*edgeWear).ToString());
+                pyScript = pyScript.Replace($"UNIEMITAMOUNT", coating.emissiveAmount.ToString());
 
                 pyScript = pyScript.Replace($"GROUPNAME_{i+1}", swatch.groupName);
 
