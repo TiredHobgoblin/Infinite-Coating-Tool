@@ -21,6 +21,7 @@ namespace Infinite_Coating_Tool
             public string groupName { get; set; }
             public float ior { get; set; }
             public List<float> normalTextureTransform { get; set; }
+            public List<float> colorAndRoughnessTextureTransform { get; set; }
             public float roughness { get; set; }
             public float roughnessBlack { get; set; }
             public float roughnessWhite { get; set; }

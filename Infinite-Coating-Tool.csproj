@@ -6,6 +6,7 @@
     <RootNamespace>Infinite_Coating_Tool</RootNamespace>
     <SelfContained>True</SelfContained>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
