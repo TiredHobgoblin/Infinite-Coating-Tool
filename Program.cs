@@ -36,7 +36,7 @@ namespace Infinite_Coating_Tool
             //    outOption
             };
 
-            rootCommand.Description = "Converts an armor coating data JSON file from the Halo Waypoint API to a preset file usable in Blender.";
+            rootCommand.Description = "Converts an armor coating data JSON file from the Halo Waypoint API or Surasia's tag dump to a preset file usable in Blender.";
 
             rootCommand.SetHandler((FileInfo i, string n/*, DirectoryInfo o*/) =>
             {
@@ -109,9 +109,22 @@ namespace Infinite_Coating_Tool
                     case "cvw_1_layered_damage":
                         regionScripts.Add(regionName, ReplaceEnums(l.Value, swatches, coating, regionedPyScript, 0b_1000_0001));
                         break;
-                    default:
-                        throw new UnknownMaterialException($"\'{l.Value.material}\' is not a recognized material name.");
-                }
+                    case "cvw_4_layered_alpha":
+                        regionScripts.Add(regionName, ReplaceEnums(l.Value, swatches, coating, regionedPyScript, 0b_1000_0001));
+                        break;
+                    case "cvw_7_layered_alpha":
+                        regionScripts.Add(regionName, ReplaceEnums(l.Value, swatches, coating, regionedPyScript, 0b_1000_0001));
+                        break;
+                    case "cvw_7_layered_sss_brute_skin":
+                        regionScripts.Add(regionName, ReplaceEnums(l.Value, swatches, coating, regionedPyScript, 0b_1000_0001));
+                        break;
+                    case "cvw_4_layered_sss_brute_skin":
+                        regionScripts.Add(regionName, ReplaceEnums(l.Value, swatches, coating, regionedPyScript, 0b_1000_0001));
+                        break;
+                    case "cvw_1_layered_sss_brute_skin":
+                        regionScripts.Add(regionName, ReplaceEnums(l.Value, swatches, coating, regionedPyScript, 0b_1000_0001));
+                        break;
+                       }
             }
 
             if (!Directory.Exists(Path.Combine(output, PathFix.SanitizeName(name))))
@@ -148,20 +161,23 @@ namespace Infinite_Coating_Tool
                 int edgeWear = 1;
                 if (groups["scratches"].ContainsKey(swatch.groupName))
                     edgeWear = int.Parse(groups["scratches"][swatch.groupName]);
-                else
-                    Console.WriteLine($"Unknown group \'{swatch.groupName}\' in swatch.");
 
                 // Fill in the script values
+
+
                 pyScript = pyScript.Replace($"GRIMEAMOUNT", coating.grimeAmount.ToString());
-                pyScript = pyScript.Replace($"SCRATCHAMOUNT", (coating.scratchAmount*edgeWear).ToString());
+                pyScript = pyScript.Replace($"SCRATCHAMOUNT", coating.scratchAmount.ToString());
                 pyScript = pyScript.Replace($"UNIEMITAMOUNT", coating.emissiveAmount.ToString());
 
-                pyScript = pyScript.Replace($"GROUPNAME_{i+1}", swatch.groupName);
+                pyScript = pyScript.Replace($"SWATCHID_{i+1}", swatch.swatchId);
 
                 pyScript = pyScript.Replace($"IOR_{i+1}", swatch.ior.ToString());
                 
-                pyScript = pyScript.Replace($"SCALEX_{i+1}", swatch.normalTextureTransform[0].ToString());
-                pyScript = pyScript.Replace($"SCALEY_{i+1}", swatch.normalTextureTransform[1].ToString());
+                pyScript = pyScript.Replace($"NORMALSCALEX_{i+1}", swatch.normalTextureTransform[0].ToString());
+                pyScript = pyScript.Replace($"NORMALSCALEY_{i+1}", swatch.normalTextureTransform[1].ToString());
+
+                pyScript = pyScript.Replace($"GRADIENTSCALEX_{i+1}", swatch.colorAndRoughnessTextureTransform[0].ToString());
+                pyScript = pyScript.Replace($"GRADIENTSCALEY_{i+1}", swatch.colorAndRoughnessTextureTransform[1].ToString());
 
                 pyScript = pyScript.Replace($"ROUGHNESS_{i+1}", swatch.roughness.ToString());
                 pyScript = pyScript.Replace($"ROUGHNESSB_{i+1}", swatch.roughnessBlack.ToString());
@@ -201,22 +217,6 @@ namespace Infinite_Coating_Tool
         }
     }
 
-    public class UnknownMaterialException : Exception
-    {
-        public UnknownMaterialException()
-        {
-        }
-
-        public UnknownMaterialException(string message)
-            : base(message)
-        {
-        }
-
-        public UnknownMaterialException(string message, Exception inner)
-            : base(message, inner)
-        {
-        }
-    }
 
     public class PathFix
     {
